@@ -3,9 +3,9 @@ import { Pokemon } from '../../models/pokemon';
 import { CoresBackgroundTipoPokemon } from '../../models/cores-background-tipo-pokemon';
 import { PokeApiService } from '../../services/poke-api.service';
 import { converterParaTitleCase } from '../../util/converter-para-title-case';
-import { TipoPokemon } from '../../models/tipo-pokemon';
 import { NgClass, NgForOf } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { mapearTipoPokemon } from '../../util/mapear-tipo-pokemon';
 
 @Component({
   selector: 'app-listagem',
@@ -52,6 +52,8 @@ export class ListagemComponent implements OnInit {
           this.pokemons.push(pokemon);
         });
       }
+
+      this.pokemons.sort((p) => p.id);
     });
   }
 
@@ -59,12 +61,8 @@ export class ListagemComponent implements OnInit {
     return {
       id: obj.id,
       nome: converterParaTitleCase(obj.name),
-      urlSprite: obj.sprites.front_default,
-      tipos: obj.types.map(this.mapearTipoPokemon),
+      urlSprite: obj.sprites.other.dream_world.front_default,
+      tipos: obj.types.map(mapearTipoPokemon),
     };
-  }
-
-  private mapearTipoPokemon(obj: any): TipoPokemon {
-    return { nome: converterParaTitleCase(obj.type.name) };
   }
 }
