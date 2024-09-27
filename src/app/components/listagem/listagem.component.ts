@@ -6,43 +6,35 @@ import { converterParaTitleCase } from '../../util/converter-para-title-case';
 import { NgClass, NgForOf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { mapearTipoPokemon } from '../../util/mapear-tipo-pokemon';
+import { CardPokemonComponent } from "./card-pokemon/card-pokemon.component";
 
 @Component({
   selector: 'app-listagem',
   standalone: true,
-  imports: [NgForOf, NgClass, RouterLink],
-  templateUrl: './listagem.component.html',
-  styleUrl: './listagem.component.scss'
+  imports: [NgForOf, NgClass, RouterLink, CardPokemonComponent],
+  templateUrl: './listagem.component.html'
 })
 export class ListagemComponent implements OnInit {
   public pokemons: Pokemon[];
+  private offsetPaginacao: number;
 
   constructor(private pokeApiService: PokeApiService) {
     this.pokemons = [];
+    this.offsetPaginacao = 0;
   }
 
-  public coresBackgroundTipoPokemon: CoresBackgroundTipoPokemon = {
-    Normal: 'fundo-tipo-normal',
-    Fire: 'fundo-tipo-fogo',
-    Water: 'fundo-tipo-agua',
-    Electric: 'fundo-tipo-eletrico',
-    Ice: 'fundo-tipo-gelo',
-    Grass: 'fundo-tipo-grama',
-    Bug: 'fundo-tipo-inseto',
-    Poison: 'fundo-tipo-veneno',
-    Flying: 'fundo-tipo-voador',
-    Ground: 'fundo-tipo-terra',
-    Rock: 'fundo-tipo-pedra',
-    Fighting: 'fundo-tipo-lutador',
-    Psychic: 'fundo-tipo-psiquico',
-    Ghost: 'fundo-tipo-fantasma',
-    Dark: 'fundo-tipo-sombrio',
-    Fairy: 'fundo-tipo-fada',
-    Steel: 'fundo-tipo-aco',
-  };
+  public ngOnInit(): void {
+    this.obterPokemons();
+  }
 
-  ngOnInit(): void {
-    this.pokeApiService.selecionarTodos().subscribe(( res ) => {
+  public buscarMaisResultados(): void {
+    this.offsetPaginacao += 20;
+
+    this.obterPokemons();
+  }
+
+  private obterPokemons() {
+    this.pokeApiService.selecionarTodos(this.offsetPaginacao).subscribe(( res ) => {
       const arrayResultados = res.results as any[];
 
       for(let resultado of arrayResultados){
