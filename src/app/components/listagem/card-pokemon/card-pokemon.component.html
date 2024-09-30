@@ -1,5 +1,25 @@
 <div class="app-card-pokemon card">
-  <a class="stretched-link" [title]="'Detalhes de ' + pokemon?.nome" [routerLink]="['/detalhes', pokemon.id]"></a>
+
+  <button
+    *ngIf="!pokemon?.favorito"
+    (click)="onFavoritarPokemon(pokemon!)"
+    title="Favoritar {{pokemon?.nome}}"
+    class="app-botao-favoritar border-0 bg-transparent z-1"
+  >
+    <i class="bi bi-star"></i>
+  </button>
+
+  <button
+    *ngIf="pokemon?.favorito"
+    (click)="onDesfavoritarPokemon(pokemon!)"
+    title="Favoritar {{pokemon?.nome}}"
+    class="app-botao-favoritar border-0 bg-transparent z-1"
+  >
+    <i class="bi bi-star-fill"></i>
+  </button>
+
+  <a class="stretched-link z-0" [title]="'Detalhes de ' + pokemon?.nome" [routerLink]="['/detalhes', pokemon?.id]"></a>
+
   <div class="card-header border-bottom-0 bg-transparent text-center">
 
     <label class="card-title fs-5 fw-bold">{{ pokemon?.nome }}</label>

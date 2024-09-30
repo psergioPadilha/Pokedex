@@ -1,19 +1,40 @@
-import { NgClass, NgForOf } from '@angular/common';
-import { Component, Input, input } from '@angular/core';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, input, Output, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CoresBackgroundTipoPokemon } from '../../../models/cores-background-tipo-pokemon';
 import { Pokemon } from '../../../models/pokemon';
+import { StatusFavoritoPokemon } from '../../../models/status-favorito-pokemon';
 
 @Component({
   selector: 'app-card-pokemon',
   standalone: true,
-  imports: [NgForOf, NgClass, RouterLink],
+  imports: [NgForOf, NgClass, NgIf, RouterLink],
   templateUrl: './card-pokemon.component.html',
   styleUrl: './card-pokemon.component.scss'
 })
+
 export class CardPokemonComponent {
 
   @Input( { required: true } ) pokemon?: Pokemon;
+  @Output() statusFavoritoAlterado: EventEmitter<StatusFavoritoPokemon>;
+
+  constructor() {
+    this.statusFavoritoAlterado = new EventEmitter();
+  }
+
+  onFavoritarPokemon(pokemon: Pokemon): void {
+    this.statusFavoritoAlterado.emit({
+      pokemon: pokemon,
+      statusFavorito: true,
+    });
+  }
+
+  onDesfavoritarPokemon(pokemon: Pokemon): void {
+    this.statusFavoritoAlterado.emit({
+      pokemon: pokemon,
+      statusFavorito: false,
+    });
+  }
 
   public coresBackgroundTipoPokemon: CoresBackgroundTipoPokemon = {
     Normal: 'fundo-tipo-normal',

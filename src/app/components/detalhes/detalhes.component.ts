@@ -60,7 +60,7 @@ export class DetalhesComponent implements OnInit {
       id: obj.id,
       nome: converterParaTitleCase(obj.name),
       sprites: [
-        obj.sprites.dream_world.front_default,
+        obj.sprites.other.dream_world.front_default,
         obj.sprites.back_default,
         obj.sprites.front_default,
         obj.sprites.back_shiny,

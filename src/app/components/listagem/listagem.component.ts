@@ -7,24 +7,31 @@ import { NgClass, NgForOf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { mapearTipoPokemon } from '../../util/mapear-tipo-pokemon';
 import { CardPokemonComponent } from "./card-pokemon/card-pokemon.component";
+import { StatusFavoritoPokemon } from '../../models/status-favorito-pokemon';
+import { PokemonsFavoritosComponent } from "./pokemons-favoritos/pokemons-favoritos.component";
+import { LocalStorageService } from '../../services/local-storage.service';
 
 @Component({
   selector: 'app-listagem',
   standalone: true,
-  imports: [NgForOf, NgClass, RouterLink, CardPokemonComponent],
+  imports: [NgForOf, NgClass, RouterLink, CardPokemonComponent, PokemonsFavoritosComponent],
   templateUrl: './listagem.component.html'
 })
+
 export class ListagemComponent implements OnInit {
   public pokemons: Pokemon[];
   private offsetPaginacao: number;
+  public pokemonsFavoritos: Pokemon[];
 
-  constructor(private pokeApiService: PokeApiService) {
+  constructor(private pokeApiService: PokeApiService, private localStorageService: LocalStorageService) {
     this.pokemons = [];
+    this.pokemonsFavoritos = [];
     this.offsetPaginacao = 0;
   }
 
   public ngOnInit(): void {
     this.obterPokemons();
+    this.pokemonsFavoritos = this.localStorageService.obterFavoritos();
   }
 
   public buscarMaisResultados(): void {
@@ -33,13 +40,24 @@ export class ListagemComponent implements OnInit {
     this.obterPokemons();
   }
 
+  public alternarStastusFavorito(status: StatusFavoritoPokemon) {
+    if (status.statusFavorito == true) {
+      this.pokemonsFavoritos.push(status.pokemon);
+    } else {
+      this.pokemonsFavoritos = this.pokemonsFavoritos.filter((p) => p.id != status.pokemon.id);
+    }
+    status.pokemon.favorito = !status.pokemon.favorito;
+
+    this.localStorageService.salvarFavoritos(this.pokemonsFavoritos);
+  }
+
   private obterPokemons() {
     this.pokeApiService.selecionarTodos(this.offsetPaginacao).subscribe(( res ) => {
       const arrayResultados = res.results as any[];
 
       for(let resultado of arrayResultados){
-        this.pokeApiService.selecionarDetalhesPorUrl(resultado.url).subscribe((detalhes: any) =>{
-          const pokemon = this.mapearPokemon(detalhes)
+        this.pokeApiService.selecionarDetalhesPorUrl(resultado.url).subscribe((objdetalhes: any) =>{
+          const pokemon = this.mapearPokemon(objdetalhes)
 
           this.pokemons.push(pokemon);
         });
@@ -55,6 +73,7 @@ export class ListagemComponent implements OnInit {
       nome: converterParaTitleCase(obj.name),
       urlSprite: obj.sprites.other.dream_world.front_default,
       tipos: obj.types.map(mapearTipoPokemon),
+      favorito: this.pokemonsFavoritos.some((p) => p.id == obj.id),
     };
   }
 }
