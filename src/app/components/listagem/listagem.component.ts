@@ -10,11 +10,12 @@ import { CardPokemonComponent } from "./card-pokemon/card-pokemon.component";
 import { StatusFavoritoPokemon } from '../../models/status-favorito-pokemon';
 import { PokemonsFavoritosComponent } from "./pokemons-favoritos/pokemons-favoritos.component";
 import { LocalStorageService } from '../../services/local-storage.service';
+import { BuscaComponent } from "../busca/busca.component";
 
 @Component({
   selector: 'app-listagem',
   standalone: true,
-  imports: [NgForOf, NgClass, RouterLink, CardPokemonComponent, PokemonsFavoritosComponent],
+  imports: [NgForOf, NgClass, RouterLink, CardPokemonComponent, PokemonsFavoritosComponent, BuscaComponent],
   templateUrl: './listagem.component.html'
 })
 
@@ -22,6 +23,7 @@ export class ListagemComponent implements OnInit {
   public pokemons: Pokemon[];
   private offsetPaginacao: number;
   public pokemonsFavoritos: Pokemon[];
+  public buscaRealizada: boolean = false;
 
   constructor(private pokeApiService: PokeApiService, private localStorageService: LocalStorageService) {
     this.pokemons = [];
@@ -37,6 +39,20 @@ export class ListagemComponent implements OnInit {
   public buscarMaisResultados(): void {
     this.offsetPaginacao += 20;
 
+    this.obterPokemons();
+  }
+
+  public filtrarPokemons(textoFiltro: string): void {
+    this.buscaRealizada = true;
+
+    this.pokemons = this.pokemons.filter((p) => {
+      return p.nome.toLowerCase().includes(textoFiltro.toLowerCase());
+    });
+  }
+
+  public limparFiltro() {
+    this.buscaRealizada = false;
+    this.pokemons = [];
     this.obterPokemons();
   }
 

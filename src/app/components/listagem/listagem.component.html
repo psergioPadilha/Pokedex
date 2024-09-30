@@ -2,6 +2,8 @@
 
   <app-pokemons-favoritos [pokemonsFavoritos]="pokemonsFavoritos"></app-pokemons-favoritos>
 
+  <app-busca class="mt-4" (pesquisaFeita)="filtrarPokemons($event)" (limpesaFiltro)="limparFiltro()"></app-busca>
+
   <div class="row justify-content-center g-3 mt-2">
 
     <div *ngFor="let pokemon of pokemons" class="col-10 col-md-6 col-lg-4 col-xl-3 mt-4">
