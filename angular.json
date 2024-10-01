@@ -121,7 +121,7 @@
         "deploy": {
           "builder": "angular-cli-ghpages:deploy",
           "options": {
-            "baseHref": "",
+            "baseHref": "https://psergiopadilha.github.io/Pokedex/",
             "repo": "https://github.com/psergioPadilha/Pokedex.git"
           }
         }
